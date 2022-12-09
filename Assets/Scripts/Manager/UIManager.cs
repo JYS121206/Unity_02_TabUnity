@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public  class UIManager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
     #region Singletone
     private static UIManager instance = null;
@@ -40,7 +40,7 @@ public  class UIManager : MonoBehaviour
     {
         if (uiList.ContainsKey(uiName) == false)
         {
-            Object uiObj = Resources.Load("UI/"+uiName);
+            Object uiObj = Resources.Load("UI/" + uiName);
             GameObject go = (GameObject)Instantiate(uiObj);
 
             uiList.Add(uiName, go);
@@ -56,4 +56,17 @@ public  class UIManager : MonoBehaviour
             uiList[uiName].SetActive(false);
     }
     #endregion
+
+    public GameObject GetUI(string uiName)
+    {
+        if (uiList.ContainsKey(uiName))
+            return uiList[uiName];
+        else
+        return null;
+    }
+
+    public void ClearList()
+    {
+        uiList.Clear();
+    }
 }
