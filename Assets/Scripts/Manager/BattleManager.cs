@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BattleManager : MonoBehaviour
 {
+    private ObjectPool objectPool;
+
     #region Singletone
     private static BattleManager instance = null;
 
@@ -24,6 +26,11 @@ public class BattleManager : MonoBehaviour
     public Monster1 monsterData;
 
     GameObject uiTab;
+
+    private void Awake()
+    {
+        objectPool = new ObjectPool();
+    }
 
     public void BattleStart(Monster1 monster)
     {
@@ -57,19 +64,25 @@ public class BattleManager : MonoBehaviour
 
     public void AttackMonster()
     {
-        float randX = Random.Range(-0.7f, 0.7f);
-        float randY = Random.Range(-0.7f, 0.7f);
-
-        ParticleSystem particle = ObjectManager.GetInstance().CreateHitEffect();
-        particle.transform.localScale = new Vector3(0.2f, 0.2f, 0.3f);
-        particle.transform.localPosition = new Vector3(0+ randX, 0.7f+ randY, -0.5f);
+        GameObject clone = objectPool.ActivatePoolItem();
 
         monsterData.hp--;
 
         if (monsterData.hp <= 0)
         {
+            objectPool.DestroyObjects();
             Victory();
         }
+    }
+
+    public void Hit()
+    {
+        float randX = Random.Range(-0.7f, 0.7f);
+        float randY = Random.Range(-0.7f, 0.7f);
+
+        ParticleSystem particle = ObjectManager.GetInstance().CreateHitEffect();
+        particle.transform.localScale = new Vector3(0.2f, 0.2f, 0.3f);
+        particle.transform.localPosition = new Vector3(0 + randX, 0.7f + randY, -0.5f);
     }
 
     void Victory()
