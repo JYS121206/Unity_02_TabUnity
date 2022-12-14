@@ -49,7 +49,6 @@ public class UIManager : MonoBehaviour
             uiList[uiName].SetActive(true);
     }
 
-
     public void CloseUI(string uiName)
     {
         if (uiList.ContainsKey(uiName))

@@ -17,5 +17,4 @@ public class BattleScene : MonoBehaviour
 
         BattleManager.GetInstance().BattleStart(new Monster1());
     }
-
 }

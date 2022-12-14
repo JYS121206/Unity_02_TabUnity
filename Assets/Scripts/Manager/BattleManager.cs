@@ -36,6 +36,8 @@ public class BattleManager : MonoBehaviour
     {
         monsterData = monster;
 
+        EffectManager.GetInstance().InitEffectPool(2);
+
         UIManager.GetInstance().OpenUI("UITab");
 
         StartCoroutine("BattleProgress");
@@ -64,7 +66,7 @@ public class BattleManager : MonoBehaviour
 
     public void AttackMonster()
     {
-        GameObject clone = objectPool.ActivatePoolItem();
+        EffectManager.GetInstance().UseEffect();
 
         monsterData.hp--;
 

@@ -7,6 +7,8 @@ public class MainScene : MonoBehaviour
     static Animator characterAnimator;
     void Start()
     {
+        GameManager.GetInstance().LoadData();
+
         UIManager uimanager = UIManager.GetInstance();
         uimanager.SetEventSystem();
         uimanager.OpenUI("UIProfile");
