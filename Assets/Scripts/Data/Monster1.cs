@@ -2,14 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Monster1
+public struct Monster1
 {
-    public string monsterName = "Monster1";
+    public string monsterName;
 
-    public int atk = 10;
-    public int hp = 10;
+    public int atk;
+    public int hp;
+    public int exp;
 
-    public float delay = 2.5f;
+    public float delay;
 
-    public int gold = 300;
+    public int gold;
+
+    public Monster1(string monsterName, int atk, int hp, int exp, float delay, int gold)
+    {
+        this.monsterName = monsterName;
+        this.atk = atk;
+        this.hp = hp;
+        this.exp = exp;
+        this.delay = delay;
+        this.gold = gold;
+    }   
 }

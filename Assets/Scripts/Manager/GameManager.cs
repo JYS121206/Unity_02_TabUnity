@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,47 +23,77 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    public string playerName = "Perioe";
+    public int characterIdx = 0;
 
-    public int level = 99;
+    public Character[] characters = new Character[]
+    {
+        new Character("Skeletone", "Character", 100, 0, 1, 500, 120, 120),
+        new Character("Mage", "Character2", 100, 0, 1, 1000, 100, 100)
+    };
 
-    public int gold = 500; //추가, 삭제
-
-    public int totalhp = 100; //증가
-    public int curhp = 100; //증가, 감소
+    /// <summary>
+    /// characters[Idx]를 리턴합니다.
+    /// </summary>
+    /// <returns></returns>
+    public Character GetCharacterIdx()
+    {
+        return characters[characterIdx];
+    }
 
     public void LoadData()
     {
-        playerName = PlayerPrefs.GetString("playerName", "Perioe");
+        Character Character = GetCharacterIdx();
 
-        level = PlayerPrefs.GetInt("level", 1);
-        gold = PlayerPrefs.GetInt("gold", 500);
-        totalhp = PlayerPrefs.GetInt("totalhp", 100);
-        curhp = PlayerPrefs.GetInt("curhp", 100);
+        // "playerName_0"  "playerName_1"  
+        // $"playerName_{idx}"  
+        Character.playerName = PlayerPrefs.GetString($"playerName_{characterIdx}", Character.playerName);
+        Character.playerImg = PlayerPrefs.GetString($"playerImg_{characterIdx}", Character.playerImg);
+
+        Character.level = PlayerPrefs.GetInt($"level_{characterIdx}", Character.level);
+        Character.gold = PlayerPrefs.GetInt($"gold_{characterIdx}", Character.gold);
+        Character.totalhp = PlayerPrefs.GetInt($"totalhp_{characterIdx}", Character.totalhp);
+        Character.curhp = PlayerPrefs.GetInt($"curhp_{characterIdx}", Character.curhp);
     }
 
     public void SaveData()
     {
-        PlayerPrefs.SetString("playerName", playerName);
+        Character Character = GetCharacterIdx();
 
-        PlayerPrefs.SetInt("level", level);
-        PlayerPrefs.SetInt("gold", gold);
-        PlayerPrefs.SetInt("totalhp", totalhp);
-        PlayerPrefs.SetInt("curhp", curhp);
+        PlayerPrefs.SetString($"playerName_{characterIdx}", Character.playerName);
+        PlayerPrefs.SetString($"playerImg_{characterIdx}", Character.playerImg);
+
+        PlayerPrefs.SetInt($"level_{characterIdx}", Character.level);
+        PlayerPrefs.SetInt($"gold_{characterIdx}", Character.gold);
+        PlayerPrefs.SetInt($"totalhp_{characterIdx}", Character.totalhp);
+        PlayerPrefs.SetInt($"curhp_{characterIdx}", Character.curhp);
 
     }
 
     public void AddGold(int gold)
     {
-        this.gold += gold;
+        GetCharacterIdx().gold += gold;
+        SaveData();
+    }
+    public void AddExp(int exp)
+    {
+        var character = GetCharacterIdx();
+
+        character.curExp += exp;
+        if (character.curExp >= character.totalExp)
+        {
+            character.level++;
+            character.curExp = 0;
+            character.totalExp += 10;
+        }
+
         SaveData();
     }
 
     public bool SpendGold(int gold)
     {
-        if (this.gold >= gold)
+        if (GetCharacterIdx().gold >= gold)
         {
-            this.gold -= gold;
+            GetCharacterIdx().gold -= gold;
             SaveData();
             return true;
         }
@@ -72,22 +103,25 @@ public class GameManager : MonoBehaviour
 
     public void IncreaseTotalHP(int addHp)
     {
-        totalhp += addHp;
+        GetCharacterIdx().totalhp += addHp;
         SaveData();
     }
 
     public void SetCurrentHP(int hp)
     {
-        curhp += hp;
+        var character = GetCharacterIdx();
 
-        if (curhp > totalhp)
-            curhp = totalhp;
+        character.curhp += hp;
 
-        if (curhp < 0)
-            curhp = 0;
+        if (character.curhp > character.totalhp)
+            character.curhp = character.totalhp;
+
+        if (character.curhp < 0)
+            character.curhp = 0;
         SaveData();
 
-        //Mathf.Clamp(curhp, 0, totalhp);
+        //Mathf.Clamp(character.curhp, 0, character.totalhp);
+        //위에 있는 if문을 한줄로 축약함
     }
 
 }

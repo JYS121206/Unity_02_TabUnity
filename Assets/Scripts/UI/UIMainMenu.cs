@@ -5,16 +5,25 @@ using UnityEngine.UI;
 
 public class UIMainMenu : MonoBehaviour
 {
-    Button btnStart;
+    public Button[] btnStart;
 
     void Start()
     {
-        btnStart = GetComponentInChildren<Button>();
-        btnStart.onClick.AddListener(OnClickStart);
+        btnStart = GetComponentsInChildren<Button>();
+
+        btnStart[0].onClick.AddListener(OnClickStart1);
+        btnStart[1].onClick.AddListener(OnClickStart2);
     }
 
-    void OnClickStart()
+    void OnClickStart1()
     {
+        GameManager.GetInstance().characterIdx = 0;
+        ScenesManager.GetInstance().ChangeScene(Scene.Main);
+    }
+
+    void OnClickStart2()
+    {
+        GameManager.GetInstance().characterIdx = 1;
         ScenesManager.GetInstance().ChangeScene(Scene.Main);
     }
 }

@@ -16,19 +16,19 @@ public class UIProfile : MonoBehaviour
 
     private void Start()
     {
-        //GameManager character = GameManager.GetInstance();
-
         RefreshState();
     }
 
     public void RefreshState()
     {
-        txtLevel.text = $"Lv. {GameManager.GetInstance().level}";
-        txtName.text = $"{GameManager.GetInstance().playerName}";
-        txtGold.text = $"{GameManager.GetInstance().gold} G";
+        var character = GameManager.GetInstance().GetCharacterIdx();
 
-        hpBar.maxValue = GameManager.GetInstance().totalhp;
-        hpBar.value = GameManager.GetInstance().curhp;
+        txtLevel.text = $"Lv. {character.level}";
+        txtName.text = $"{character.playerName}";
+        txtGold.text = $"{character.gold} G";
+
+        hpBar.maxValue = character.totalhp;
+        hpBar.value = character.curhp;
         txtHp.text = $"{hpBar.value}/{hpBar.maxValue}";
     }
 }

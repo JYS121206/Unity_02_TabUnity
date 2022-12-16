@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class BattleManager : MonoBehaviour
 {
-    private ObjectPool objectPool;
-
     #region Singletone
     private static BattleManager instance = null;
 
@@ -23,14 +21,22 @@ public class BattleManager : MonoBehaviour
     }
     #endregion
 
+    public Monster1[] monsterDatas = new Monster1[]
+        {
+            new Monster1("Monster1", 10, 10, 30, 2.5f, 300),
+            new Monster1("Monster2", 15, 15, 70, 2f, 1000)
+        };
+
+    public Monster1 GetRandomMonster()
+    {
+        int rand = Random.Range(0,monsterDatas.Length);
+
+        return monsterDatas[rand];
+    }
+
     public Monster1 monsterData;
 
     GameObject uiTab;
-
-    private void Awake()
-    {
-        objectPool = new ObjectPool();
-    }
 
     public void BattleStart(Monster1 monster)
     {
@@ -45,7 +51,9 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator BattleProgress()
     {
-        while (GameManager.GetInstance().curhp > 0)
+        var character = GameManager.GetInstance().GetCharacterIdx();
+
+        while (character.curhp > 0)
         {
             yield return new WaitForSeconds(monsterData.delay);
 
@@ -58,7 +66,7 @@ public class BattleManager : MonoBehaviour
                 ui.GetComponent<UIProfile>().RefreshState();
             }
 
-            Debug.Log($"몬스터가 플레이어에게 공격을 했습니다. | 대미지: -{damage} | 남은 체력: {GameManager.GetInstance().curhp}");
+            Debug.Log($"몬스터가 플레이어에게 공격을 했습니다. | 대미지: -{damage} | 남은 체력: {character.curhp}");
         }
 
         Lose();
@@ -69,22 +77,10 @@ public class BattleManager : MonoBehaviour
         EffectManager.GetInstance().UseEffect();
 
         monsterData.hp--;
-
         if (monsterData.hp <= 0)
         {
-            objectPool.DestroyObjects();
             Victory();
         }
-    }
-
-    public void Hit()
-    {
-        float randX = Random.Range(-0.7f, 0.7f);
-        float randY = Random.Range(-0.7f, 0.7f);
-
-        ParticleSystem particle = ObjectManager.GetInstance().CreateHitEffect();
-        particle.transform.localScale = new Vector3(0.2f, 0.2f, 0.3f);
-        particle.transform.localPosition = new Vector3(0 + randX, 0.7f + randY, -0.5f);
     }
 
     void Victory()
@@ -94,7 +90,7 @@ public class BattleManager : MonoBehaviour
         UIManager.GetInstance().CloseUI("UITab");
 
         GameManager.GetInstance().AddGold(monsterData.gold);
-
+        GameManager.GetInstance().AddExp(monsterData.exp);
 
         Invoke("MoveToMain", 2.5f);
     }
